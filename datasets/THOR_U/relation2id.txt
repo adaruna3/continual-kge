@@ -1,0 +1,16 @@
+15
+LocInRoom	0
+MatCanBe	1
+MatUsedTo	2
+MathasState	3
+ObjCanBe	4
+ObjInLoc	5
+ObjInRoom	6
+ObjOnLoc	7
+ObjUsedTo	8
+ObjhasState	9
+OperatesOn	10
+HasEffect	11
+HasMat	12
+InverseActionOf	13
+InverseStateOf	14
