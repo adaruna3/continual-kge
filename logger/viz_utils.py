@@ -29,15 +29,19 @@ from logger.terminal_utils import logout
 import pdb
 
 
-class ProcessorViz:
+class AbstractProcessorViz:
     def __init__(self, args):
         log_name = str(args.tag) + "__"
         log_name += str(args.dataset) + "_"
         log_name += "mt" + str(args.model) + "_"
         log_name += "clm" + str(args.cl_method)
-
         log_dir = os.path.abspath(os.path.dirname(__file__)) + "/logs/"
         self.log_fp = log_dir + log_name
+
+
+class ProcessorViz(AbstractProcessorViz):
+    def __init__(self, args):
+        super(ProcessorViz, self).__init__(args)
         if os.path.isdir(self.log_fp):  # overwrites existing events log
             files = os.listdir(self.log_fp)
             for filename in files:

@@ -1,5 +1,5 @@
 # Continual Knowledge Graph Embedding (CKGE)
-This repo contains three CKGE benchmark datasets as well as scripts to auto-generate new datasets from
+Supporting code for [CKGE](https://arxiv.org/abs/2101.05850) paper. This repo contains three CKGE benchmark datasets as well as scripts to auto-generate new datasets from
 existing knowledge graphs.
 
 ## Pre-requisites
@@ -32,7 +32,7 @@ This repo contains two knowledge graph embedding models, three CKGE datasets, tw
 [THOR](https://adaruna3.github.io/robocse/)
 - Learning Settings:
     1. standard: follows precedents & assumptions from knowledge graph embedding [community](http://papers.nips.cc/paper/5071-translating-embeddings-for-modeling-multi-relational-data.pdf).
-    2. continual: implements CKGE as described in the submission.
+    2. continual: implements CKGE as described in the [paper](https://arxiv.org/abs/2101.05850).
 - CKGE Approaches:
     1. [Progressive Neural Networks](./models/pnn_models.py)
     1. [Copy Weight with Re-Init](./models/cwr_models.py)
@@ -44,15 +44,19 @@ This repo contains two knowledge graph embedding models, three CKGE datasets, tw
 The following scripts run the experiments presented in the submission. The final results of the scripts are PDF files
 containing plots from evaluations and text containing the outputs of statistical significance tests.
 
-### Generate the CKGE datasets from the paper (triple sampling)
+### Generate the CKGE datasets from the paper (triple sampling in paper appendix)
 1. Run `./experiments/scripts/run_generate_dataset.sh`.
 2. Output datasets will be placed in `./datasets/` directory.
 3. PDFs containing the dataset statistics will be generated and placed at the root directory of the repo.
 
+### Generate entity and relation relation sampling datasets from the appendix
+1. Comment/uncomment corresponding lines from `./experiments/scripts/run_generate_dataset.sh`
+
 ### Benchmark Evaluations (training time for 5 runs is more than 3 days)
-1. Train the models by running `./experiments/scripts/run_continual_setting_experiment_benchmark_train.sh`.
-2. Test the models, produce plots, and run statistical tests by running `./experiments/scripts/run_continual_setting_experiment_benchmark_test.sh`.
+1. Train the models by running `./experiments/scripts/run_continual_setting_experiment_benchmark_train_TS.sh`.
+2. Test the models, produce plots, and run statistical tests by running `./experiments/scripts/run_continual_setting_experiment_benchmark_test_TS.sh`.
 3. Output is a PDF in the root directory of the repo and several text files with outputs of the statistical tests.
+4. Similarly for entity or relation sampling, run 1-3 as above but using either corresponding `*_ES.sh` or `*_RS.sh` files, respectively.
 
 ### Unconstrained Robot Evaluation Setting (training time for 5 runs is ~1.5 days)
 1. Train the models by running `./experiments/scripts/run_continual_setting_experiment_robot_train_uncon.sh`.

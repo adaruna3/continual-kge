@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# sets up the environment for CKGE project
+# sets up the environment for task planning w/ common-sense project
 
 echo "****************************"
 echo "sourcing the Python 3 virtual env"

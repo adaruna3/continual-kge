@@ -1,13 +1,13 @@
 import numpy as np
 from copy import copy
 import torch
-from os.path import basename
+import os
 import __main__  # used to get the original execute module
 
 from models import model_utils
 from models.pytorch_modelsize import SizeEstimator
 from logger.terminal_utils import ExperimentArgParse, logout, log_train, log_test, InteractiveTerminal
-from logger.viz_utils import ProcessorViz
+from logger.viz_utils import ProcessorViz, AbstractProcessorViz
 
 
 def setup_experiment(args):
@@ -65,9 +65,14 @@ def setup_experiment(args):
     optimizer = model_utils.init_optimizer(model_optim_args, model)
 
     # generate training visualization logging
-    viz_args = copy(args)
-    viz_args.tag = basename(__main__.__file__).split(".")[0]
-    viz = ProcessorViz(viz_args)
+    if args.sess_mode == "TRAIN":
+        viz_args = copy(args)
+        viz_args.tag = os.path.basename(__main__.__file__).split(".")[0]
+        viz = ProcessorViz(viz_args)
+    else:
+        viz_args = copy(args)
+        viz_args.tag = os.path.basename(__main__.__file__).split(".")[0]
+        viz = AbstractProcessorViz(viz_args)
 
     return tr_bps, de_bps, viz, model, optimizer
 
@@ -86,7 +91,7 @@ def setup_train_session(sess, args, model, optim, tr_bps, viz):
     if sess:
         # load best model from prior session
         load_args = copy(args)
-        load_args.tag = basename(__main__.__file__).split(".")[0]
+        load_args.tag = os.path.basename(__main__.__file__).split(".")[0]
         load_args.sess = str(sess - 1)
         model = model_utils.load_model(load_args, model)
 
@@ -129,7 +134,7 @@ def setup_train_session(sess, args, model, optim, tr_bps, viz):
             # uses the prior generative model to extend the triple set
             prev_dgr_args = copy(args)
             prev_dgr_args.dataset += "_" + str(sess-1)
-            prev_dgr_args.tag = basename(__main__.__file__).split(".")[0]
+            prev_dgr_args.tag = os.path.basename(__main__.__file__).split(".")[0]
             prev_dgr_args.sess = sess-1
             gruvae = model_utils.GRUVAETrainBatchProcessor(prev_dgr_args)
             gruvae.load_model()
@@ -146,7 +151,7 @@ def setup_train_session(sess, args, model, optim, tr_bps, viz):
             del gruvae
         dgr_args = copy(args)
         dgr_args.dataset += "_" + str(sess)
-        dgr_args.tag = basename(__main__.__file__).split(".")[0]
+        dgr_args.tag = os.path.basename(__main__.__file__).split(".")[0]
         dgr_args.sess = sess
         gruvae = model_utils.GRUVAETrainBatchProcessor(dgr_args)
         if triples is not None:
@@ -176,13 +181,13 @@ def setup_train_session(sess, args, model, optim, tr_bps, viz):
 
     # generates early stop tracker for training
     tracker_args = copy(args)
-    tracker_args.tag = basename(__main__.__file__).split(".")[0]
+    tracker_args.tag = os.path.basename(__main__.__file__).split(".")[0]
     tracker_args.sess = str(sess)
     tracker = model_utils.EarlyStopTracker(tracker_args)
 
     # calculates model and sample memory sizes for results
     final_num_train_triples = copy(tr_bp.dataset.triples.shape[0])
-    stored_sample_size = final_num_train_triples - initial_num_train_triples - num_generated_train_triples
+    stored_sample_size = min(0, final_num_train_triples - initial_num_train_triples - num_generated_train_triples)
     se = SizeEstimator(copy(args))
     model_params_size = se.estimate_size(model)[0]
     model_mem_stats = (stored_sample_size, model_params_size)
@@ -198,7 +203,7 @@ def setup_test_session(sess, args, model):
     """
     # loads best model for session
     load_args = copy(args)
-    load_args.tag = basename(__main__.__file__).split(".")[0]
+    load_args.tag = os.path.basename(__main__.__file__).split(".")[0]
     load_args.sess = str(sess)
     model = model_utils.load_model(load_args, model)
 
