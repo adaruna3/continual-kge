@@ -118,6 +118,3 @@ anneal max (lambda_am), and anneal position (lambda_ap). The used settings are p
 |  WN18RR  |         200         |        150       |        100       |     0.06     |     0.8    |      200.0      |
 | FB15K237 |         200         |        150       |        100       |     0.06     |     0.8    |      200.0      |
 |  AI2Thor |         100         |        75        |        50        |     0.06     |     0.8    |      200.0      |
-
-## ToDos
-1. Extended Experiments Code, Results, and arXiv manuscript.
